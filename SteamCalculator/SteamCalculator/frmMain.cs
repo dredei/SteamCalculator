@@ -50,6 +50,8 @@ namespace SteamCalculator
         private void button1_Click( object sender, EventArgs e )
         {
             btnStart.Enabled = false;
+            lvGames.Items.Clear();
+            sumPrice = 0;
             frmSteamId frm = new frmSteamId( this );
             frm.ShowDialog();
             List<SteamCalculator.games> gamesList = new List<SteamCalculator.games>();

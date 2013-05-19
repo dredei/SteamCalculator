@@ -21,6 +21,11 @@ namespace SteamCalculator
 
         private void btnOk_Click( object sender, EventArgs e )
         {
+            if ( string.IsNullOrEmpty( tbSteamId.Text ) )
+            {
+                MessageBox.Show( "Enter SteamId", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                return;
+            }
             Host.steamId = tbSteamId.Text;
             this.Close();
         }
