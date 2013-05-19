@@ -10,6 +10,13 @@ using Newtonsoft.Json;
 
 namespace SteamCalculator
 {
+    public class UpdEventArgs : EventArgs
+    {
+        public int progress { get; set; }
+        public int maxProgress { get; set; }
+        public string msg { get; set; }
+    }
+
     class SteamCalculator
     {
         public class gamesJSONGame
@@ -41,6 +48,7 @@ namespace SteamCalculator
         string key;
         const string urlGetOwnedGames = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={0}&steamid={1}&format=json";
         const string urlGame = "http://store.steampowered.com/app/{0}/?cc=us";
+        public event EventHandler<UpdEventArgs> updEvent = delegate { };
 
         public SteamCalculator()
             : this( "B19695B79BF8679540CA66B25D292D1F" )
@@ -91,15 +99,15 @@ namespace SteamCalculator
             string name = string.Empty;
             Regex regex = new Regex( @"<div class=""apphub_AppName"">([^<>]*)</div>" );
             Match match = regex.Match( content );
-            name = match.Groups[ 1 ].ToString();            
+            name = match.Groups[ 1 ].ToString();
             return name;
         }
 
         public void getGameInfo( string appId, out double price, out string name )
-        {            
+        {
             string content = navigate( urlGame.f( appId ) );
             price = getGamePrice( content );
-            name  = getGameName( content );
+            name = getGameName( content );
         }
 
         public List<gamesJSONGame> getGamesJSON( string steamId )
@@ -137,17 +145,35 @@ namespace SteamCalculator
         {
             List<games> games = new List<games>();
             List<gamesJSONGame> gamesJSON = getGamesJSON( steamId );
+            UpdEventArgs args = new UpdEventArgs();
+            args.maxProgress = gamesJSON.Count;
+            args.progress = 0;
             for ( int i = 0; i < gamesJSON.Count; i++ )
             {
                 games game = new games();
                 double price = double.NaN;
                 string name = string.Empty;
                 getGameInfo( gamesJSON[ i ].appid.ToString(), out price, out name );
+                name = WebUtility.HtmlDecode( name );
                 game.appId = gamesJSON[ i ].appid.ToString();
                 game.price = price;
                 game.name = name;
-                games.Add( game );
-                Thread.Sleep( 100 );
+                if ( !string.IsNullOrEmpty( name ) )
+                {
+                    games.Add( game );
+
+                    args.progress++;
+                    args.msg = "{0};{1}".f( name, price );
+                    updEvent( this, args );
+                }
+                else
+                {
+                    args.progress++;
+                    args.msg = "";
+                    updEvent( this, args );
+                }
+
+                //Thread.Sleep( 100 );
             }
             return games;
         }
