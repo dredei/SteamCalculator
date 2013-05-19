@@ -9,11 +9,11 @@ using System.Windows.Forms;
 
 namespace SteamCalculator
 {
-    public partial class frmSteamId : Form
+    public partial class frmCommunityId : Form
     {
         frmMain Host;
 
-        public frmSteamId(frmMain Host)
+        public frmCommunityId(frmMain Host)
         {
             InitializeComponent();
             this.Host = Host;
@@ -26,7 +26,7 @@ namespace SteamCalculator
                 MessageBox.Show( "Enter SteamId", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
                 return;
             }
-            Host.steamId = tbSteamId.Text;
+            Host.communityId = tbSteamId.Text;
             this.Close();
         }
     }

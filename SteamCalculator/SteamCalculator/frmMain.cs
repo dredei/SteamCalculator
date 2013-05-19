@@ -17,7 +17,7 @@ namespace SteamCalculator
         List<SteamCalculator.games> games = null;
         double sumPrice = 0;
         Thread thr = null;
-        public string steamId;
+        public string communityId;
 
         public frmMain()
         {
@@ -28,7 +28,7 @@ namespace SteamCalculator
         {
             try
             {
-                games = steamCalc.getGames( steamId );
+                games = steamCalc.getGames( communityId );
                 MessageBox.Show( "Sum: $" + sumPrice.ToString(), "Sum", MessageBoxButtons.OK, MessageBoxIcon.Information );
             }
             catch ( Exception e )
@@ -52,7 +52,7 @@ namespace SteamCalculator
             btnStart.Enabled = false;
             lvGames.Items.Clear();
             sumPrice = 0;
-            frmSteamId frm = new frmSteamId( this );
+            frmCommunityId frm = new frmCommunityId( this );
             frm.ShowDialog();
             List<SteamCalculator.games> gamesList = new List<SteamCalculator.games>();
             thr = new Thread( calculatePrice );

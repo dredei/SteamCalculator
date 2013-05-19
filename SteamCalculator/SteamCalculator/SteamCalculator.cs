@@ -144,12 +144,12 @@ namespace SteamCalculator
         /// <summary>
         /// Get games account (Steam Web API) with AppId.
         /// </summary>
-        /// <param name="steamId">SteamId</param>
+        /// <param name="communityId">CommunityId</param>
         /// <returns>Games list.</returns>
-        public List<gamesJSONGame> getGamesJSON( string steamId )
+        public List<gamesJSONGame> getGamesJSON( string communityId )
         {
             List<gamesJSONGame> gamesList = new List<gamesJSONGame>();
-            string games = navigate( urlGetOwnedGames.f( key, steamId ) );
+            string games = navigate( urlGetOwnedGames.f( key, communityId ) );
             gamesJSON gj = JsonConvert.DeserializeObject<gamesJSON>( games );
             gamesJSONResponse gjResponse = gj.response;
             if ( gjResponse.game_count == 0 )
@@ -184,12 +184,12 @@ namespace SteamCalculator
         /// <summary>
         /// Get games with names, price and AppId.
         /// </summary>
-        /// <param name="steamId">SteamId</param>
+        /// <param name="communityId">CommunityId</param>
         /// <returns>Games list with names, price and AppId.</returns>
-        public List<games> getGames( string steamId )
+        public List<games> getGames( string communityId )
         {
             List<games> games = new List<games>();
-            List<gamesJSONGame> gamesJSON = getGamesJSON( steamId );
+            List<gamesJSONGame> gamesJSON = getGamesJSON( communityId );
             UpdEventArgs args = new UpdEventArgs();
             args.maxProgress = gamesJSON.Count;
             args.progress = 0;
