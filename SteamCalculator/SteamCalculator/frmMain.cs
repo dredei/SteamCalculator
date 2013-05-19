@@ -17,6 +17,7 @@ namespace SteamCalculator
         List<SteamCalculator.games> games = null;
         double sumPrice = 0;
         Thread thr = null;
+        public string steamId; //76561198013216436
 
         public frmMain()
         {
@@ -25,9 +26,19 @@ namespace SteamCalculator
 
         private void calculatePrice()
         {
-            games = steamCalc.getGames( "76561198013216436" );
-            btnStart.Enabled = true;
-            MessageBox.Show( "Sum: $" + sumPrice.ToString(), "Sum", MessageBoxButtons.OK, MessageBoxIcon.Information );
+            try
+            {
+                games = steamCalc.getGames( steamId );
+                MessageBox.Show( "Sum: $" + sumPrice.ToString(), "Sum", MessageBoxButtons.OK, MessageBoxIcon.Information );
+            }
+            catch ( Exception e )
+            {
+                MessageBox.Show( e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
+            }
+            finally
+            {
+                btnStart.Enabled = true;
+            }
         }
 
         private void centerLables( Label lbl )
@@ -39,6 +50,8 @@ namespace SteamCalculator
         private void button1_Click( object sender, EventArgs e )
         {
             btnStart.Enabled = false;
+            frmSteamId frm = new frmSteamId( this );
+            frm.ShowDialog();
             List<SteamCalculator.games> gamesList = new List<SteamCalculator.games>();
             thr = new Thread( calculatePrice );
             thr.Start();

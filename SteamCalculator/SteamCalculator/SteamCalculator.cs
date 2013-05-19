@@ -116,6 +116,10 @@ namespace SteamCalculator
             string games = navigate( urlGetOwnedGames.f( key, steamId ) );
             gamesJSON gj = JsonConvert.DeserializeObject<gamesJSON>( games );
             gamesJSONResponse gjResponse = gj.response;
+            if ( gjResponse.game_count == 0 )
+            {
+                throw new Exception( "Make your profile public!" );
+            }
             for ( int i = 0; i < gjResponse.games.Count; i++ )
             {
                 gamesJSONGame gjg = new gamesJSONGame();
