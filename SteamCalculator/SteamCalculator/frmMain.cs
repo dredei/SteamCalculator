@@ -17,7 +17,7 @@ namespace SteamCalculator
         List<SteamCalculator.games> games = null;
         double sumPrice = 0;
         Thread thr = null;
-        public string steamId; //76561198013216436
+        public string steamId;
 
         public frmMain()
         {

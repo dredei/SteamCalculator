@@ -17,6 +17,9 @@ namespace SteamCalculator
         public string msg { get; set; }
     }
 
+    /// <summary>
+    /// Class allows you to get all the games account: name, id and price.
+    /// </summary>
     class SteamCalculator
     {
         public class gamesJSONGame
@@ -50,15 +53,27 @@ namespace SteamCalculator
         const string urlGame = "http://store.steampowered.com/app/{0}/?cc=us";
         public event EventHandler<UpdEventArgs> updEvent = delegate { };
 
+        /// <summary>
+        /// Default constructor with my API-key.
+        /// </summary>
         public SteamCalculator()
             : this( "B19695B79BF8679540CA66B25D292D1F" )
         { }
 
+        /// <summary>
+        /// Constructor with your API-key.
+        /// </summary>
+        /// <param name="key">API-key</param>
         public SteamCalculator( string key )
         {
             this.key = key;
         }
 
+        /// <summary>
+        /// Opens the page.
+        /// </summary>
+        /// <param name="url">Page url.</param>
+        /// <returns>Page content.</returns>
         public string navigate( string url )
         {
             WebClient client = new WebClient();
@@ -67,6 +82,11 @@ namespace SteamCalculator
             return reader.ReadToEnd();
         }
 
+        /// <summary>
+        /// Get game price.
+        /// </summary>
+        /// <param name="content">Game page (HTML).</param>
+        /// <returns>Price</returns>
         public double getGamePrice( string content )
         {
             double price = double.NaN;
@@ -94,6 +114,11 @@ namespace SteamCalculator
             return price;
         }
 
+        /// <summary>
+        /// Get game name.
+        /// </summary>
+        /// <param name="content">Game page (HTML).</param>
+        /// <returns>Game name.</returns>
         public string getGameName( string content )
         {
             string name = string.Empty;
@@ -103,6 +128,12 @@ namespace SteamCalculator
             return name;
         }
 
+        /// <summary>
+        /// Get game info (price and name).
+        /// </summary>
+        /// <param name="appId">AppId</param>
+        /// <param name="price">out price</param>
+        /// <param name="name">out price</param>
         public void getGameInfo( string appId, out double price, out string name )
         {
             string content = navigate( urlGame.f( appId ) );
@@ -110,6 +141,11 @@ namespace SteamCalculator
             name = getGameName( content );
         }
 
+        /// <summary>
+        /// Get games account (Steam Web API) with AppId.
+        /// </summary>
+        /// <param name="steamId">SteamId</param>
+        /// <returns>Games list.</returns>
         public List<gamesJSONGame> getGamesJSON( string steamId )
         {
             List<gamesJSONGame> gamesList = new List<gamesJSONGame>();
@@ -145,6 +181,11 @@ namespace SteamCalculator
             return gamesList;
         }
 
+        /// <summary>
+        /// Get games with names, price and AppId.
+        /// </summary>
+        /// <param name="steamId">SteamId</param>
+        /// <returns>Games list with names, price and AppId.</returns>
         public List<games> getGames( string steamId )
         {
             List<games> games = new List<games>();
