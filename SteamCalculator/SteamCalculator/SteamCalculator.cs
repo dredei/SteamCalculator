@@ -7,6 +7,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Newtonsoft.Json;
+using System.Xml;
+using System.Windows.Forms;
 
 namespace SteamCalculator
 {
@@ -51,6 +53,7 @@ namespace SteamCalculator
         string key;
         const string urlGetOwnedGames = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={0}&steamid={1}&format=json";
         const string urlGame = "http://store.steampowered.com/app/{0}/?cc=us";
+        const string urlProfInfo = "http://steamcommunity.com/id/{0}/?xml=1&l=english";
         public event EventHandler<UpdEventArgs> updEvent = delegate { };
 
         /// <summary>
@@ -79,6 +82,7 @@ namespace SteamCalculator
             WebClient client = new WebClient();
             Stream stream = client.OpenRead( url );
             StreamReader reader = new StreamReader( stream );
+            //string r = reader.ReadToEnd();
             return reader.ReadToEnd();
         }
 
@@ -142,6 +146,21 @@ namespace SteamCalculator
         }
 
         /// <summary>
+        /// Get Commmunity ID by ID
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <returns>Community ID.</returns>
+
+        public string getCommunityId( string id )
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            string xml = navigate( urlProfInfo.f( id ) );
+            xmlDoc.LoadXml( xml );
+            XmlNodeList xmlNodeList = xmlDoc.SelectNodes( "profile" );
+            return xmlNodeList[ 0 ].ChildNodes[ 0 ].InnerText;
+        }
+
+        /// <summary>
         /// Get games account (Steam Web API) with AppId.
         /// </summary>
         /// <param name="communityId">CommunityId</param>
@@ -189,6 +208,12 @@ namespace SteamCalculator
         public List<games> getGames( string communityId )
         {
             List<games> games = new List<games>();
+            Regex regex = new Regex( "^[0-9]+$" );
+            Match match = regex.Match( communityId );
+            if ( !match.Success )
+            {
+                communityId = getCommunityId( communityId );
+            }
             List<gamesJSONGame> gamesJSON = getGamesJSON( communityId );
             UpdEventArgs args = new UpdEventArgs();
             args.maxProgress = gamesJSON.Count;

@@ -36,46 +36,48 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Location = new System.Drawing.Point( 0, 0 );
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(98, 13);
+            this.label1.Size = new System.Drawing.Size( 124, 13 );
             this.label1.TabIndex = 0;
-            this.label1.Text = "Enter CommunityId:";
+            this.label1.Text = "Enter CommunityId or ID:";
             // 
             // tbSteamId
             // 
-            this.tbSteamId.Location = new System.Drawing.Point(3, 16);
+            this.tbSteamId.Location = new System.Drawing.Point( 3, 16 );
             this.tbSteamId.Name = "tbSteamId";
-            this.tbSteamId.Size = new System.Drawing.Size(145, 20);
+            this.tbSteamId.Size = new System.Drawing.Size( 145, 20 );
             this.tbSteamId.TabIndex = 1;
             // 
             // btnOk
             // 
             this.btnOk.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnOk.Location = new System.Drawing.Point(3, 42);
+            this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOk.Location = new System.Drawing.Point( 3, 42 );
             this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(145, 23);
+            this.btnOk.Size = new System.Drawing.Size( 145, 23 );
             this.btnOk.TabIndex = 2;
             this.btnOk.Text = "OK";
             this.btnOk.UseVisualStyleBackColor = true;
-            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+            this.btnOk.Click += new System.EventHandler( this.btnOk_Click );
             // 
             // frmCommunityId
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(150, 67);
-            this.Controls.Add(this.btnOk);
-            this.Controls.Add(this.tbSteamId);
-            this.Controls.Add(this.label1);
+            this.ClientSize = new System.Drawing.Size( 150, 67 );
+            this.Controls.Add( this.btnOk );
+            this.Controls.Add( this.tbSteamId );
+            this.Controls.Add( this.label1 );
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmCommunityId";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CommunityId";
-            this.ResumeLayout(false);
+            this.ResumeLayout( false );
             this.PerformLayout();
 
         }

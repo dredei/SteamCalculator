@@ -47,18 +47,6 @@ namespace SteamCalculator
             lbl.Location = new Point( l, lbl.Location.Y );
         }
 
-        private void button1_Click( object sender, EventArgs e )
-        {
-            btnStart.Enabled = false;
-            lvGames.Items.Clear();
-            sumPrice = 0;
-            frmCommunityId frm = new frmCommunityId( this );
-            frm.ShowDialog();
-            List<SteamCalculator.games> gamesList = new List<SteamCalculator.games>();
-            thr = new Thread( calculatePrice );
-            thr.Start();
-        }
-
         private void frmMain_Load( object sender, EventArgs e )
         {
             System.Windows.Forms.Control.CheckForIllegalCrossThreadCalls = false;
@@ -101,7 +89,25 @@ namespace SteamCalculator
 
         private void frmMain_FormClosed( object sender, FormClosedEventArgs e )
         {
-            thr.Abort();
+            if ( thr != null )
+                thr.Abort();
+        }
+
+        private void btnStart_Click( object sender, EventArgs e )
+        {
+            btnStart.Enabled = false;
+            lvGames.Items.Clear();
+            sumPrice = 0;
+            frmCommunityId frm = new frmCommunityId( this );
+            DialogResult dlgRes = frm.ShowDialog();
+            if ( dlgRes != DialogResult.OK )
+            {
+                btnStart.Enabled = true;
+                return;
+            }
+            List<SteamCalculator.games> gamesList = new List<SteamCalculator.games>();
+            thr = new Thread( calculatePrice );
+            thr.Start();
         }
     }
 }

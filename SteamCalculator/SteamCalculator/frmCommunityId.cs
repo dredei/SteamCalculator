@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace SteamCalculator
 {
@@ -13,7 +14,7 @@ namespace SteamCalculator
     {
         frmMain Host;
 
-        public frmCommunityId(frmMain Host)
+        public frmCommunityId( frmMain Host )
         {
             InitializeComponent();
             this.Host = Host;
@@ -21,6 +22,8 @@ namespace SteamCalculator
 
         private void btnOk_Click( object sender, EventArgs e )
         {
+            Regex regex = new Regex( "^[0-9]+$" );
+            Match match = regex.Match( tbSteamId.Text );
             if ( string.IsNullOrEmpty( tbSteamId.Text ) )
             {
                 MessageBox.Show( "Enter SteamId", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
