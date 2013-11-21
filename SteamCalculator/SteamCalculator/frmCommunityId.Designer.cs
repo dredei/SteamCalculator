@@ -1,6 +1,6 @@
 ﻿namespace SteamCalculator
 {
-    partial class frmCommunityId
+    partial class FrmCommunityId
     {
         /// <summary>
         /// Required designer variable.

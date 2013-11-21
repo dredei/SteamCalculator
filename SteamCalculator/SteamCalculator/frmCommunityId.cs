@@ -1,35 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿#region Using
+
+using System;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
+
+#endregion
 
 namespace SteamCalculator
 {
-    public partial class frmCommunityId : Form
+    public partial class FrmCommunityId : Form
     {
-        frmMain Host;
+        private readonly FrmMain _host;
 
-        public frmCommunityId( frmMain Host )
+        public FrmCommunityId( FrmMain host )
         {
             InitializeComponent();
-            this.Host = Host;
+            this._host = host;
         }
 
         private void btnOk_Click( object sender, EventArgs e )
         {
-            Regex regex = new Regex( "^[0-9]+$" );
-            Match match = regex.Match( tbSteamId.Text );
             if ( string.IsNullOrEmpty( tbSteamId.Text ) )
             {
                 MessageBox.Show( "Enter SteamId", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
                 return;
             }
-            Host.communityId = tbSteamId.Text;
+            this._host.CommunityId = tbSteamId.Text;
             this.Close();
         }
     }

@@ -1,48 +1,50 @@
-﻿using System;
+﻿#region Using
+
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using Newtonsoft.Json;
 using System.Xml;
-using System.Windows.Forms;
+using Newtonsoft.Json;
+
+#endregion
 
 namespace SteamCalculator
 {
     public class UpdEventArgs : EventArgs
     {
-        public int progress { get; set; }
-        public int maxProgress { get; set; }
-        public string msg { get; set; }
+        public int Progress { get; set; }
+        public int MaxProgress { get; set; }
+        public string Msg { get; set; }
     }
 
     /// <summary>
     /// Class allows you to get all the games account: name, id and price.
     /// </summary>
-    class SteamCalculator
+    public class SteamCalculator
     {
-        public class gamesJSONGame
+        #region Classes
+
+        public class GamesJsonGame
         {
             public int appid { get; set; }
             public int? playtime_forever { get; set; }
             public int? playtime_2weeks { get; set; }
         }
 
-        public class gamesJSONResponse
+        public class GamesJSONResponse
         {
             public int game_count { get; set; }
-            public List<gamesJSONGame> games { get; set; }
+            public List<GamesJsonGame> games { get; set; }
         }
 
-        public class gamesJSON
+        public class GamesJSON
         {
-            public gamesJSONResponse response { get; set; }
+            public GamesJSONResponse response { get; set; }
         }
 
-        public class games
+        public class Games
         {
             public string appId { get; set; }
             public string name { get; set; }
@@ -50,18 +52,25 @@ namespace SteamCalculator
             public string region = "us";
         }
 
-        string key;
-        const string urlGetOwnedGames = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={0}&steamid={1}&format=json";
-        const string urlGame = "http://store.steampowered.com/app/{0}/?cc=us";
-        const string urlProfInfo = "http://steamcommunity.com/id/{0}/?xml=1&l=english";
+        #endregion
+
         public event EventHandler<UpdEventArgs> updEvent = delegate { };
+
+        private readonly string key;
+
+        private const string UrlGetOwnedGames =
+            "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={0}&steamid={1}&format=json";
+
+        private const string UrlGame = "http://store.steampowered.com/app/{0}/?cc=us";
+        private const string UrlProfInfo = "http://steamcommunity.com/id/{0}/?xml=1&l=english";
 
         /// <summary>
         /// Default constructor with my API-key.
         /// </summary>
         public SteamCalculator()
             : this( "B19695B79BF8679540CA66B25D292D1F" )
-        { }
+        {
+        }
 
         /// <summary>
         /// Constructor with your API-key.
@@ -79,10 +88,9 @@ namespace SteamCalculator
         /// <returns>Page content.</returns>
         public string navigate( string url )
         {
-            WebClient client = new WebClient();
+            var client = new WebClient();
             Stream stream = client.OpenRead( url );
-            StreamReader reader = new StreamReader( stream );
-            //string r = reader.ReadToEnd();
+            var reader = new StreamReader( stream );
             return reader.ReadToEnd();
         }
 
@@ -91,10 +99,12 @@ namespace SteamCalculator
         /// </summary>
         /// <param name="content">Game page (HTML).</param>
         /// <returns>Price</returns>
-        public double getGamePrice( string content )
+        public double GetGamePrice( string content )
         {
             double price = double.NaN;
-            Regex regex = new Regex( @"<div\sclass=""game_purchase_price\sprice""\s*itemprop=""price"">\s*&#36;([0-9.]+)(\sUSD)?\s*</div>" );
+            var regex =
+                new Regex(
+                    @"<div\sclass=""game_purchase_price\sprice""\s*itemprop=""price"">\s*&#36;([0-9.]+)(\sUSD)?\s*</div>" );
             Match match = regex.Match( content );
             if ( !match.Success )
             {
@@ -123,10 +133,10 @@ namespace SteamCalculator
         /// </summary>
         /// <param name="content">Game page (HTML).</param>
         /// <returns>Game name.</returns>
-        public string getGameName( string content )
+        public string GetGameName( string content )
         {
             string name = string.Empty;
-            Regex regex = new Regex( @"<div class=""apphub_AppName"">([^<>]*)</div>" );
+            var regex = new Regex( @"<div class=""apphub_AppName"">([^<>]*)</div>" );
             Match match = regex.Match( content );
             name = match.Groups[ 1 ].ToString();
             return name;
@@ -138,11 +148,11 @@ namespace SteamCalculator
         /// <param name="appId">AppId</param>
         /// <param name="price">out price</param>
         /// <param name="name">out price</param>
-        public void getGameInfo( string appId, out double price, out string name )
+        public void GetGameInfo( string appId, out double price, out string name )
         {
-            string content = navigate( urlGame.f( appId ) );
-            price = getGamePrice( content );
-            name = getGameName( content );
+            string content = navigate( UrlGame.F( appId ) );
+            price = GetGamePrice( content );
+            name = GetGameName( content );
         }
 
         /// <summary>
@@ -150,11 +160,10 @@ namespace SteamCalculator
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns>Community ID.</returns>
-
-        public string getCommunityId( string id )
+        public string GetCommunityId( string id )
         {
-            XmlDocument xmlDoc = new XmlDocument();
-            string xml = navigate( urlProfInfo.f( id ) );
+            var xmlDoc = new XmlDocument();
+            string xml = navigate( UrlProfInfo.F( id ) );
             xmlDoc.LoadXml( xml );
             XmlNodeList xmlNodeList = xmlDoc.SelectNodes( "profile" );
             return xmlNodeList[ 0 ].ChildNodes[ 0 ].InnerText;
@@ -165,19 +174,19 @@ namespace SteamCalculator
         /// </summary>
         /// <param name="communityId">CommunityId</param>
         /// <returns>Games list.</returns>
-        public List<gamesJSONGame> getGamesJSON( string communityId )
+        public List<GamesJsonGame> getGamesJSON( string communityId )
         {
-            List<gamesJSONGame> gamesList = new List<gamesJSONGame>();
-            string games = navigate( urlGetOwnedGames.f( key, communityId ) );
-            gamesJSON gj = JsonConvert.DeserializeObject<gamesJSON>( games );
-            gamesJSONResponse gjResponse = gj.response;
+            var gamesList = new List<GamesJsonGame>();
+            string games = navigate( UrlGetOwnedGames.F( key, communityId ) );
+            var gj = JsonConvert.DeserializeObject<GamesJSON>( games );
+            GamesJSONResponse gjResponse = gj.response;
             if ( gjResponse.game_count == 0 )
             {
                 throw new Exception( "Make your profile public!" );
             }
             for ( int i = 0; i < gjResponse.games.Count; i++ )
             {
-                gamesJSONGame gjg = new gamesJSONGame();
+                var gjg = new GamesJsonGame();
                 gjg.appid = gjResponse.games[ i ].appid;
                 if ( gjResponse.games[ i ].playtime_2weeks == null )
                 {
@@ -205,45 +214,43 @@ namespace SteamCalculator
         /// </summary>
         /// <param name="communityId">CommunityId</param>
         /// <returns>Games list with names, price and AppId.</returns>
-        public List<games> getGames( string communityId )
+        public List<Games> GetGames( string communityId )
         {
-            List<games> games = new List<games>();
-            Regex regex = new Regex( "^[0-9]+$" );
+            var games = new List<Games>();
+            var regex = new Regex( "^[0-9]+$" );
             Match match = regex.Match( communityId );
             if ( !match.Success )
             {
-                communityId = getCommunityId( communityId );
+                communityId = GetCommunityId( communityId );
             }
-            List<gamesJSONGame> gamesJSON = getGamesJSON( communityId );
-            UpdEventArgs args = new UpdEventArgs();
-            args.maxProgress = gamesJSON.Count;
-            args.progress = 0;
-            for ( int i = 0; i < gamesJSON.Count; i++ )
+            var gamesJson = getGamesJSON( communityId );
+            var args = new UpdEventArgs();
+            args.MaxProgress = gamesJson.Count;
+            args.Progress = 0;
+            for ( int i = 0; i < gamesJson.Count; i++ )
             {
-                games game = new games();
-                double price = double.NaN;
+                var game = new Games();
+                double price;
                 string name = string.Empty;
-                getGameInfo( gamesJSON[ i ].appid.ToString(), out price, out name );
+                GetGameInfo( gamesJson[ i ].appid.ToString(), out price, out name );
                 name = WebUtility.HtmlDecode( name );
-                game.appId = gamesJSON[ i ].appid.ToString();
+                game.appId = gamesJson[ i ].appid.ToString();
                 game.price = price;
                 game.name = name;
                 if ( !string.IsNullOrEmpty( name ) )
                 {
                     games.Add( game );
 
-                    args.progress++;
-                    args.msg = "{0};{1}".f( name, price );
+                    args.Progress++;
+                    args.Msg = "{0};{1}".F( name, price );
                     updEvent( this, args );
                 }
                 else
                 {
-                    args.progress++;
-                    args.msg = "";
+                    args.Progress++;
+                    args.Msg = "";
                     updEvent( this, args );
                 }
-
-                //Thread.Sleep( 100 );
             }
             return games;
         }
@@ -251,7 +258,7 @@ namespace SteamCalculator
 
     public static class ExtensionsMethods
     {
-        public static string f( this string format, params object[] args )
+        public static string F( this string format, params object[] args )
         {
             return String.Format( format, args );
         }
